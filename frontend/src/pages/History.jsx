@@ -56,8 +56,35 @@ function History() {
     return "bg-red-500/20 text-red-400";
   };
 
-  const downloadPDF = (id) => {
-    window.open(`http://127.0.0.1:8000/api/scans/${id}/pdf`, "_blank");
+  const downloadPDF = async (id) => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const response = await fetch(
+        `http://127.0.0.1:8000/api/scans/${id}/pdf`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/pdf",
+          },
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error("PDF download failed");
+      }
+
+      const blob = await response.blob();
+
+      const url = window.URL.createObjectURL(blob);
+
+      window.open(url, "_blank");
+    } catch (error) {
+      console.log(error);
+
+      alert("Could not download PDF");
+    }
   };
 
   const handleDelete = async (id) => {
@@ -333,12 +360,7 @@ function History() {
                           </Link>
 
                           <button
-                            onClick={() =>
-                              window.open(
-                                `http://127.0.0.1:8000/api/scans/${scan.id}/pdf`,
-                                "_blank",
-                              )
-                            }
+                            onClick={() => downloadPDF(scan.id)}
                             className="
       bg-blue-500
       hover:bg-blue-600
