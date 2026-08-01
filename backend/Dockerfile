@@ -9,14 +9,21 @@ RUN apt-get update && apt-get install -y \
     libpng-dev \
     libonig-dev \
     libxml2-dev \
+    libpq-dev \
     zip \
-    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
+    && docker-php-ext-install \
+        pdo \
+        pdo_pgsql \
+        mbstring \
+        exif \
+        pcntl \
+        bcmath \
+        gd
 
 COPY . .
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Create Laravel required directories
 RUN mkdir -p bootstrap/cache \
     && mkdir -p storage/framework/cache \
     && mkdir -p storage/framework/sessions \
@@ -29,4 +36,4 @@ RUN php artisan config:clear
 
 EXPOSE 10000
 
-CMD php artisan serve --host=0.0.0.0 --port=10000
+CMD php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=10000
