@@ -81,14 +81,18 @@ class ScanController extends Controller
 
 
 
-    public function show($id)
-    {
+    public function show($id, Request $request)
+{
 
-        return response()->json(
-            Scan::findOrFail($id)
-        );
+    return response()->json(
 
-    }
+        $request->user()
+        ->scans()
+        ->findOrFail($id)
+
+    );
+
+}
 
 
 

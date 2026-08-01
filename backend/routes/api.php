@@ -67,8 +67,11 @@ Route::delete(
 // View single report
 Route::get('/scans/{id}', [ScanController::class,'show']);
 
-Route::get(
-    '/scans/{id}/pdf',
-    [PdfController::class, 'download']
-);
+Route::middleware('auth:sanctum')->group(function(){
 
+    Route::get(
+        '/scans/{id}/pdf',
+        [PdfController::class, 'download']
+    );
+
+});
