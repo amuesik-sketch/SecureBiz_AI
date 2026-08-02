@@ -7,32 +7,48 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class PdfController extends Controller
 {
-
     public function download($id)
     {
+        try {
 
-        $scan = Scan::findOrFail($id);
-
-
-        $pdf = Pdf::loadView(
-            'reports.security',
-            [
-                'scan' => $scan
-            ]
-        );
+            $scan = Scan::findOrFail($id);
 
 
-        // Enable better character rendering
-        $pdf->setOptions([
-            'defaultFont' => 'DejaVu Sans',
-            'isRemoteEnabled' => true,
-        ]);
+            $pdf = Pdf::loadView(
+                'reports.security',
+                [
+                    'scan' => $scan
+                ]
+            );
 
 
-        return $pdf->download(
-            'SecureBiz-AI-Security-Report.pdf'
-        );
+            $pdf->setOptions([
+                'defaultFont' => 'DejaVu Sans',
+                'isRemoteEnabled' => true,
+            ]);
 
+
+            return $pdf->download(
+                'SecureBiz-AI-Security-Report.pdf'
+            );
+
+
+        } catch (\Exception $e) {
+
+
+            return response()->json([
+
+                'message' => 'PDF generation failed',
+
+                'error' => $e->getMessage(),
+
+                'line' => $e->getLine(),
+
+                'file' => $e->getFile()
+
+            ], 500);
+
+
+        }
     }
-
 }

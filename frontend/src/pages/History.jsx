@@ -61,9 +61,10 @@ function History() {
       const token = localStorage.getItem("token");
 
       const response = await fetch(
-        `http://127.0.0.1:8000/api/scans/${id}/pdf`,
+        `https://securebiz-ai.onrender.com/api/scans/${id}/pdf`,
         {
           method: "GET",
+
           headers: {
             Authorization: `Bearer ${token}`,
             Accept: "application/pdf",
@@ -72,6 +73,10 @@ function History() {
       );
 
       if (!response.ok) {
+        const errorText = await response.text();
+
+        console.log(errorText);
+
         throw new Error("PDF download failed");
       }
 
@@ -79,7 +84,19 @@ function History() {
 
       const url = window.URL.createObjectURL(blob);
 
-      window.open(url, "_blank");
+      const link = document.createElement("a");
+
+      link.href = url;
+
+      link.download = "SecureBiz-AI-Security-Report.pdf";
+
+      document.body.appendChild(link);
+
+      link.click();
+
+      link.remove();
+
+      window.URL.revokeObjectURL(url);
     } catch (error) {
       console.log(error);
 
