@@ -75,12 +75,13 @@ function Report() {
   const downloadPDF = async () => {
     try {
       const response = await axios.get(
-        `http://127.0.0.1:8000/api/scans/${id}/pdf`,
+        `https://securebiz-ai.onrender.com/api/scans/${id}/pdf`,
         {
           responseType: "blob",
 
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Accept: "application/pdf",
           },
         },
       );
@@ -89,7 +90,7 @@ function Report() {
         type: "application/pdf",
       });
 
-      const fileURL = URL.createObjectURL(file);
+      const fileURL = window.URL.createObjectURL(file);
 
       const link = document.createElement("a");
 
@@ -102,6 +103,8 @@ function Report() {
       link.click();
 
       link.remove();
+
+      window.URL.revokeObjectURL(fileURL);
     } catch (error) {
       console.log(error);
 
